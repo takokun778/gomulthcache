@@ -49,6 +49,14 @@ func (kvs *KVS[T]) Get(ctx context.Context, key string) (T, error) {
 		return value, errors.New("failed to unmarshal json")
 	}
 
+	// redisから取得した値をインメモリに保存しておく
+	ttl := time.Duration(time.Second)
+
+	if ok := kvs.Cache.SetWithTTL(key, value, 1, ttl); !ok {
+		// 失敗してもロギングして終了する
+		log.Printf("failed to set in memory")
+	}
+
 	return value, nil
 }
 
