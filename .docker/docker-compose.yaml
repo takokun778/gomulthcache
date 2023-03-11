@@ -1,0 +1,19 @@
+services:
+  redis:
+    container_name: ${APP_NAME}-redis
+    image: redis:7.0.9-alpine
+    ports:
+      - ${REDIS_PORT}:6379
+    restart: always
+  server:
+    container_name: ${APP_NAME}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${PORT}:8080
+    environment:
+      REDIS_URL: redis:6379
+    volumes:
+      - ../:/app
+    restart: always
